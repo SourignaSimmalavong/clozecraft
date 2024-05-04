@@ -7,6 +7,9 @@ import { ClozeTypeEnum, ClozeTypesPriority } from "./ClozeTypeEnum";
 const numPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?\\d+(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const hintPatternRegex = new RegExp(`\\[(?:(?:\\\\\\])?[^\\]]?)+?hint(?:(?:\\\\\\])?[^\\]]?)+?\\]`)
 const answerKeyword = `answer` // Must not have regex special characters
+const cjk_range = '\u4e00-\u9fff'
+const specialCharacters = `\t"'-_ /'!#$<>\`\\:+| []{}()`;
+const extendedCharactersSet = `${cjk_range}a-zA-Z0-9āēīōūĀĒĪŌŪáéíóúÁÉÍÓÚǎěǐǒǔǍĚǏǑǓàèìòùÀÈÌÒÙäëïöüÄËÏÖÜâêîôûÂÊÎÔÛçÇ${specialCharacters}`
 
 export class ClozePattern implements IClozePattern {
     private readonly _raw: string;
@@ -52,7 +55,7 @@ export class ClozePattern implements IClozePattern {
         this.hintPattern = _hintMatch;
         this.numRegex = ClozePattern.processPattern(_numMatch[0], (text: string) => text.replace(/\d+/g, "(\\d+)"));
         this.seqRegex = ClozePattern.processPattern(_numMatch[0], (text: string) => text.replace(/\d+/g, "([ash]+)"));
-        this.hintRegex = ClozePattern.processPattern(_hintMatch[0], (text: string) => text.replace(/hint/g, "(.+?)"));
+        this.hintRegex = ClozePattern.processPattern(_hintMatch[0], (text: string) => text.replace(/hint/g, `([${escapeRegexString(extendedCharactersSet)}]+?)`));
 
         this.hintRegex = "(?:" + this.hintRegex + ")?"; // Cloze hint is always optional
 
@@ -86,7 +89,7 @@ export class ClozePattern implements IClozePattern {
             secondReplace +
             escapeRegexString(ending);
 
-        regexStr = regexStr.replace(answerKeyword, "(.+?)"); // answerKeyword must not have regex special characters
+        regexStr = regexStr.replace(answerKeyword, `([${escapeRegexString(extendedCharactersSet)}]+?)`);
 
         return regexStr;
     }

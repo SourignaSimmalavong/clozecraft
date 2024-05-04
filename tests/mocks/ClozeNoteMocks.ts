@@ -352,6 +352,50 @@ const commentWithFootnoteNotes = {
             }
         },
         {
+            _noteDescription: 'Classic "comment with footnote" note. With hints. With accents',
+            clozeType: ClozeTypeEnum.CLASSIC,
+            raw: 'In French, "regular expression" is translated as\n* =="expression régulière"==%%1%%^[french word]\n* =="expression rationnelle"==%%2%%^[french word]',
+            numCards: 2,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'In French, "regular expression" is translated as\n* [french word]\n* "expression rationnelle"';
+                    case 1:
+                        return 'In French, "regular expression" is translated as\n* "expression régulière"\n* [french word]'
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'In French, "regular expression" is translated as\n* "expression régulière"\n* "expression rationnelle"';
+                    case 1:
+                        return 'In French, "regular expression" is translated as\n* "expression régulière"\n* "expression rationnelle"';
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
+            _noteDescription: 'Classic "comment with footnote" note. With hints. With special characters',
+            clozeType: ClozeTypeEnum.SIMPLE,
+            raw: `Some special characters: ==\t"'-_ /'!#$<>\`\\:+| []{}()==`,  // [{}]
+            numCards: 1,
+            getCardFront: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return 'Some special characters: [...]';
+                }
+                throw new Error('Invalid card index.');
+            },
+            getCardBack: (cardIndex: number) => {
+                switch (cardIndex) {
+                    case 0:
+                        return `Some special characters: \t"'-_ /'!#$<>\`\\:+| []{}()`;
+                }
+                throw new Error('Invalid card index.');
+            }
+        },
+        {
             _noteDescription: 'Classic "comment with footnote" note. Without hints.',
             clozeType: ClozeTypeEnum.CLASSIC,
             raw: 'People from ==Brazil==%%1%% are called ==Brazilians==%%2%%.',
